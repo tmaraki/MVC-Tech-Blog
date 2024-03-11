@@ -4,6 +4,7 @@ const withAuth = require('../../utils/auth');
 
 router.post('/', withAuth, async (req, res) => {
     try {
+        console.log('POST/ bp router accessed');
         const newBlogPost = await BlogPost.create({
             ...req.body,
             user_id: req.session.user_id,
@@ -15,6 +16,7 @@ router.post('/', withAuth, async (req, res) => {
 
 router.delete('/:id', withAuth, async (req, res) => {
     try {
+        console.log('DELETE/ bp router destroyed');
         const blogPostData = await BlogPost.destroy({
             where: {
                 id: req.params.id,
@@ -23,7 +25,7 @@ router.delete('/:id', withAuth, async (req, res) => {
         });
         
         if (!blogPostData) {
-            res.status(400).json({message: 'no blogpost found with this id'});
+            res.status(400).json({message: 'No blogpost found with this id'});
             return;
         }
         res.status(200).json(blogPostData);
