@@ -1,41 +1,34 @@
 const router = require('express').Router();
-// Import the User model from the models folder
 const { User } = require('../../models');
+const withAuth = require('../../utils/auth');
 
-// If a POST request is made to /api/users, a new user is created. The user id and logged in state is saved to the session within the request object.
+// signup new user
 router.post('/', async (req, res) => {
   try {
-    console.log('POST / user route accessed');
-    const userData = await User.create(req.body);
-
+    const dbUserData = await User.create(req.body);
     req.session.save(() => {
-      req.session.user_id = userData.id;
+      req.session.user_id = dbUserData.id;
       req.session.logged_in = true;
-
-      res.status(200).json(userData);
+      res.status(200).json({ message: `Account created for ${dbUserData.username}`});
     });
   } catch (err) {
     res.status(400).json(err);
   }
 });
 
-// If a POST request is made to /api/users/login, the function checks to see if the user information 
-//matches the information in the database and logs the user in. 
-// If correct, the user ID and logged-in state are saved to the session within the request object.
+// login user ('/api/user/login')
 router.post('/login', async (req, res) => {
   try {
-    console.log('POST / user route accessed and logged in');
-    const userData = await User.findOne({ where: { email: req.body.email } });
-
-    if (!userData) {
+    const dbUserData = await User.findOne({ where: { email: req.body.email } });
+    if (!dbUserData) {
       res
         .status(400)
         .json({ message: 'Incorrect email or password, please try again' });
       return;
     }
 
-    const validPassword = await userData.checkPassword(req.body.password);
-
+    //check password
+    const validPassword = await dbUserData.checkPassword(req.body.password)
     if (!validPassword) {
       res
         .status(400)
@@ -43,27 +36,31 @@ router.post('/login', async (req, res) => {
       return;
     }
 
+    //create session and send response back
     req.session.save(() => {
-      req.session.user_id = userData.id;
+      req.session.user_id = dbUserData.id;
       req.session.logged_in = true;
-      
+      //response to user
       res.json({ user: userData, message: 'You are now logged in!' });
     });
-
   } catch (err) {
     res.status(400).json(err);
   }
 });
 
-// If a POST request is made to /api/users/logout, the function checks the logged_in state in the request.session object and destroys that session if logged_in is true.
-router.post('/logout', (req, res) => {
-  if (req.session.logged_in) {
-    console.log('POST / logout accessed');
-    req.session.destroy(() => {
-      res.status(204).end();
+// logout
+router.post('/logout', withAuth, async (req, res) => {
+  try{  
+    if (req.session.logged_in) {
+      console.log('POST / logout accessed');
+      req.session.destroy(() => {
+        res.status(204).end();
     });
-  } else {
-    res.status(404).end();
+    } else {
+      res.status(404).end();
+    }
+  } catch {
+    res.status(400).end();
   }
 });
 

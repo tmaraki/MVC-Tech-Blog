@@ -1,7 +1,9 @@
-const router = require('express').Router();
-const { BlogPost, User } = require('../models');
+const express = require('express');
+const router = express.Router();
+const { BlogPost, User, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
+//GET all posts 
 router.get('/', async (req, res) => {
   try {
     console.log('GET / home router accessed');
@@ -12,17 +14,25 @@ router.get('/', async (req, res) => {
           model: User,
           attributes: ['name'],
         },
-      ],
+        {
+          model: Comment,
+          attributes: ['id', 'comment', 'postId', 'userId', 'created_at'],
+          include: {
+              model: User,
+              attributes: ['username'],
+          },
+      }],
     });
 
     // Serialize data so the template can read it
-    const blogPosts = blogPostData.map((blogPost) => blogPost.get({ plain: true }));
+    const blogPosts = dbBlogPostData.map((blogPost) => blogPost.get({ plain: true }));
 
     // Pass serialized data and session flag into template
     res.render('homepage', { 
       blogPosts, 
-      logged_in: req.session.logged_in 
-    });
+      logged_in: req.session.logged_in,
+      username: req.session.username,
+      userId: req.session.userId });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -30,57 +40,50 @@ router.get('/', async (req, res) => {
 
 router.get('/blogpost/:id', async (req, res) => {
   try {
-    console.log('GET/bp router accessed by :id');
-    const blogPostData = await blogPost.findByPk(req.params.id, {
+    console.log('GET /blogpost/:id router accessed by :id');
+    const blogPostData = await BlogPost.findByPk(req.params.id, {
       include: [
         {
-          model: User,
-          attributes: ['name'],
-        },
-      ],
-    });
-
-    const blogPost = blogPostData.get({ plain: true });
-
-    res.render('blogPost', {
-      ...blogPost,
-      logged_in: req.session.logged_in
-    });
+         model: Comment,
+                    attributes: ['id', 'comment', 'postId', 'userId', 'created_at'],
+                    include: {
+                      model: User,
+                      attributes: ['username'],
+                    },
+                  },
+                  {
+                    model: User,
+                    attributes: ['username'],
+                  },
+            ],
+        });
+        if (dbBlogPostData) {
+            const blogPost = dbBlogPostData.get({ plain: true });
+            console.log(blogPost);
+            res.render('single-post', { blogPost, loggedIn: req.session.loggedIn, username: req.session.username, })  
+        } else {
+            res.status(404).json({ message: "This id has no post."});
+            return;
+        }
   } catch (err) {
+    console.error(err);
     res.status(500).json(err);
   }
 });
 
-// Use withAuth middleware to prevent access to route
-router.get('/dashboard', withAuth, async (req, res) => {
-  try {
-    console.log('GET/dashboard router accessed');
-    // Find the logged in user based on the session ID
-    const userData = await User.findByPk(req.session.user_id, {
-      attributes: { exclude: ['password'] },
-      include: [{ model: BlogPost }],
-    });
-
-    const user = userData.get({ plain: true });
-
-    res.render('dashboard', {
-      ...user,
-      logged_in: true
-    });
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
-
+// login
 router.get('/login', (req, res) => {
   console.log('GET/login router accessed');
-  // If the user is already logged in, redirect the request to another route
-  if (req.session.logged_in) {
+    if (req.session.logged_in) {
     res.redirect('/dashboard');
     return;
   }
-
   res.render('login');
 });
+
+// Signup
+router.get('/signup', async (req, res) => {
+  res.render('signup');
+})
 
 module.exports = router;
