@@ -15,11 +15,9 @@ const signupFormHandler = async (event) => {
       if (response.ok) {
         document.location.replace('/dashboard');
       } else {
-        alert(response.statusText);
+        alert('Something is wrong in signing up!');
       }
     }
   };
 
-  document
-  .querySelector('.signup-form')
-  .addEventListener('submit', signupFormHandler);
+  document.querySelector('#signup-form').addEventListener('submit', signupFormHandler);
