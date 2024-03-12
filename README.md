@@ -1,23 +1,39 @@
-# MVC-Tech-Blog
+# MVC Tech Blog
 
-## Installation
+## Description
 
-Install MySQL2, dotenv and Sequelize
+I attempted to build a CMS-Style blog site where developers can publish their blog posts and comment on other developers' posts as well. This app follows the MVC paradigm in its architectural structure, using Handlebars.js as the templating language, Sequelize as the ORM, and the express-session npm package for authentication.
 
-        npm i mysql2
-        npm i sequelize
-        npm i dotenv
+## Table of Contents!
 
-# The Challenge
+- [Instruction](#instruction)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [Questions](#questions)
 
-## User Story
+<a name="instruction"/>
 
+## Instruction
+
+To download app, run the command: `https://github.com/tmaraki/MVC-Tech-Blog.git`
+
+After downloading to your local device, please run the command `npm install` to install packages
+
+View 'package-lock.json' file to ensure, MySQL, express-session, sequelize, and node.js are all installed.
+
+To start the app, use the command: `npm start`
+
+### User Story
+
+```
 AS A developer who writes about tech
 I WANT a CMS-style blog site
 SO THAT I can publish articles, blog posts, and my thoughts and opinions
+```
 
-## Acceptance Criteria
+### Acceptance Criteria
 
+```
 GIVEN a CMS-style blog site
 WHEN I visit the site for the first time
 THEN I am presented with the homepage, which includes existing blog posts if any have been posted; navigation links for the homepage and the dashboard; and the option to log in
@@ -50,6 +66,30 @@ THEN I am able to delete or update my post and taken back to an updated dashboar
 WHEN I click on the logout option in the navigation
 THEN I am signed out of the site
 WHEN I am idle on the site for more than a set time
-THEN I am able to view posts and comments but I am prompted to log in again before I can add, update, or delete posts
+THEN I am able to view comments but I am prompted to log in again before I can add, update, or delete comments
+```
 
-# Usage
+<a name="usage"/>
+
+## Usage
+
+- HTML, CSS, Bootstrap
+- MySql, Sequelize
+- Handlebars.js
+- Node.js, Express.js
+
+<a name="contributing"/>
+
+## Contributing
+
+Github
+
+<a name="questions"/>
+
+## Questions
+
+- Linkedin: https://www.linkedin.com/in/toshie-araki//
+
+- Email: toshiemaraki@gmail.com
+
+- Github: https://github.com/tmaraki

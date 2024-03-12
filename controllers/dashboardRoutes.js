@@ -14,7 +14,7 @@ router.get('/', withAuth, (req, res) => {
         include: [
           {
             model: Comment,
-            attributes: ['id', 'comment', 'postId', 'userId', 'created_at'],
+            attributes: ['id', 'comment', 'postId', 'use_Id', 'created_at'],
             include: {
               model: User,
               attributes: ['username'],
@@ -27,7 +27,7 @@ router.get('/', withAuth, (req, res) => {
         ],
       })
       .then((dbBlogPostData) => {
-        const blogposts = dbBlogPostData.map((post) => post.get({ plain: true }));
+        const blogposts = dbBlogPostData.map((blogPost) => blogPost.get({ plain: true }));
         res.render('dashboard', { posts, loggedIn: true, username: req.session.username,});       
       })
       .catch((err) => {

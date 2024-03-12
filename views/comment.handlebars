@@ -1,11 +1,11 @@
 <p class="col-md-6 col-lg-4 mb-5">Please log in to leave comments</p>
 <div class="card col-md-6 col-lg-4 mb-5">
     <div class="card-header">
-        <h5 class="card-title float-left">{{post.title}}</h5>
-        <h8 class="card-subtitle mb-2 float-right">Posted by {{post.user.username}} on {{formatDate post.created_at}}</h6>
+        <h5 class="card-title float-left">{{blogpost.title}}</h5>
+        <h8 class="card-subtitle mb-2 float-right">Posted by {{blogpost.user.username}} on {{formatDate blogpost.created_at}}</h6>
     </div>  
     <div class="card-body">  
-        <p class="card-text">{{post.content}}</p>
+        <p class="card-text">{{blogpost.content}}</p>
     </div>
     <div class="card-body comment">     
         {{#each this}}
@@ -20,7 +20,7 @@
     </div>
 </div> 
 
-<input type="hidden" name="post-id" value="{{post.id}}"/>
+<input type="hidden" name="blogpost-id" value="{{blogpost.id}}"/>
 
 {{#if loggedIn}}
 <div class="card">
